@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Javascript Chess Game by Abdul</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- partial:index.partial.html -->
+    <div id="game">
+      <div id="board"></div>
+
+      <div id="turn">It's Whites Turn!</div>
+      <!-- Captured pieces display -->
+      <div>
+        <h3>Captured Pieces</h3>
+        <div><strong>White:</strong> <span id="captured_black"></span></div>
+        <div><strong>Black:</strong> <span id="captured_white"></span></div>
+      </div>
+
+      <!-- Reset button -->
+      <button id="resetBtn">Reset Game</button>
+    </div>
+    <!-- partial -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="./script.js"></script>
+    <script>
+      const board = document.getElementById("board"); //use js to create a board with 2 for loops
+
+      for (let y = 8; y >= 1; y--) {
+        for (let x = 1; x <= 8; x++) {
+          const cell = document.createElement("div");
+          cell.className = "gamecell";
+          if ((x + y) % 2 === 0) {
+            cell.classList.add("grey");
+          }
+          cell.id = `${x}_${y}`;
+          board.appendChild(cell);
+        }
+      }
+      function updateCapturedDisplay() {
+        const capturedWhite = document.getElementById("captured_white");
+        const capturedBlack = document.getElementById("captured_black");
+
+        capturedWhite.innerHTML = "";
+        capturedBlack.innerHTML = "";
+
+        Object.values(main.variables.pieces).forEach((piece) => {
+          if (piece.captured) {
+            const span = document.createElement("span");
+            span.innerHTML = piece.img + " ";
+            if (piece.type.startsWith("w")) {
+              capturedWhite.appendChild(span);
+            } else {
+              capturedBlack.appendChild(span);
+            }
+          }
+        });
+      }
+      function renderPieces() {
+        Object.values(main.variables.pieces).forEach((piece) => {
+          if (!piece.captured) {
+            const cell = document.getElementById(piece.position);
+            cell.innerHTML = piece.img;
+          }
+        });
+      }
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        resetGame();
+      });
+
+      function resetGame() {
+        // Reset piece data (you might want to deep clone an initial state instead)
+        main.variables = JSON.parse(JSON.stringify(initialGameState.variables));
+
+        // Clear all pieces from DOM
+        document.querySelectorAll(".gamecell").forEach((cell) => {
+          cell.innerHTML = "";
+        });
+
+        // Render pieces
+        renderPieces();
+
+        // Clear captured
+        updateCapturedDisplay();
+      }
+    </script>
+  </body>
+</html>
