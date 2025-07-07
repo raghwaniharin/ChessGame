@@ -6,21 +6,19 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
+    <nav id="navbar">
+      <h2>Welcome to Chesss</h2>
+    </nav>
     <!-- partial:index.partial.html -->
     <div id="game">
       <div id="board"></div>
 
       <div id="turn">It's Whites Turn!</div>
-      <!-- Captured pieces display -->
-      <div>
-        <h3>Captured Pieces</h3>
-        <div><strong>White:</strong> <span id="captured_black"></span></div>
-        <div><strong>Black:</strong> <span id="captured_white"></span></div>
-      </div>
 
       <!-- Reset button -->
       <button id="resetBtn">Reset Game</button>
     </div>
+
     <!-- partial -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="./script.js"></script>
@@ -38,25 +36,7 @@
           board.appendChild(cell);
         }
       }
-      function updateCapturedDisplay() {
-        const capturedWhite = document.getElementById("captured_white");
-        const capturedBlack = document.getElementById("captured_black");
 
-        capturedWhite.innerHTML = "";
-        capturedBlack.innerHTML = "";
-
-        Object.values(main.variables.pieces).forEach((piece) => {
-          if (piece.captured) {
-            const span = document.createElement("span");
-            span.innerHTML = piece.img + " ";
-            if (piece.type.startsWith("w")) {
-              capturedWhite.appendChild(span);
-            } else {
-              capturedBlack.appendChild(span);
-            }
-          }
-        });
-      }
       function renderPieces() {
         Object.values(main.variables.pieces).forEach((piece) => {
           if (!piece.captured) {
@@ -86,5 +66,9 @@
         updateCapturedDisplay();
       }
     </script>
+    <br />
+    <footer id="footer">
+      <p>© 2025 JavaScript Chess Game. All rights reserved.</p>
+    </footer>
   </body>
 </html>

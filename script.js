@@ -230,12 +230,71 @@ let main = {
         captured: false,
         type: 'b_pawn',
         moved: false
-      }
-
-    }
+      },
+    }     
   },
-
   methods: {
+          resetGame() {
+        // Deep copy initial state back to main.variables
+        main.variables = JSON.parse(JSON.stringify(window.initialGameState.variables));
+
+        // Clear all pieces from DOM
+        $('.gamecell').html('');
+        
+        // Re-render all pieces based on reset variables
+        for (const pieceName in main.variables.pieces) {
+          const piece = main.variables.pieces[pieceName];
+          if (!piece.captured) {
+            $('#' + piece.position).html(piece.img);
+            $('#' + piece.position).attr('chess', pieceName);
+          } else {
+            // Make sure captured pieces cells are empty
+            $('#' + piece.position).html('');
+            $('#' + piece.position).attr('chess', 'null');
+          }
+        }
+
+        // Reset turn, selected piece, highlighted etc
+        main.variables.turn = 'w';
+        main.variables.selectedpiece = '';
+        main.variables.highlighted = [];
+
+        $('#turn').html("It's Whites Turn");
+      },
+
+
+// Update this inside your capture method to show captured pieces visually
+capture: function (target) {
+  let selectedpieceName = $('#' + main.variables.selectedpiece).attr('chess');
+  let selectedpiece = main.variables.pieces[selectedpieceName];
+
+  // Move selected piece to target cell
+  $('#' + target.id).html(main.variables.pieces[selectedpiece.name].img);
+  $('#' + target.id).attr('chess', selectedpiece.name);
+
+  // Clear old cell
+  $('#' + selectedpiece.id).html('');
+  $('#' + selectedpiece.id).attr('chess', 'null');
+
+  // Update piece position and moved flag
+  main.variables.pieces[selectedpiece.name].position = target.id;
+  main.variables.pieces[selectedpiece.name].moved = true;
+
+  // Mark captured piece
+  main.variables.pieces[target.name].captured = true;
+
+  // Add captured piece to the captured pieces display
+  let capturedPieceName = target.name;
+  let capturedPieceColor = capturedPieceName.slice(0, 1); // 'w' or 'b'
+  let capturedImg = main.variables.pieces[capturedPieceName].img;
+
+  if (capturedPieceColor === 'w') {
+    $('#capturedWhite .pieces-container').append('<span class="captured-piece">' + capturedImg + '</span>');
+  } else {
+    $('#capturedBlack .pieces-container').append('<span class="captured-piece">' + capturedImg + '</span>');
+  }
+},
+
     gamesetup: function() {
       $('.gamecell').attr('chess', 'null');//reset cells
       for (let gamepiece in main.variables.pieces) {//extract current position from x and y coordinates
@@ -719,9 +778,21 @@ let main = {
 
   }
 };
+let initialGameState = {
+  variables: JSON.parse(JSON.stringify(main.variables))
+};
+
 
 $(document).ready(function() {
   main.methods.gamesetup();
+  window.initialGameState = {
+    variables: JSON.parse(JSON.stringify(main.variables))
+  };
+            
+            $('#resetGameBtn').click(function() {
+            main.methods.resetGame();
+          });
+
 
   $('.gamecell').click(function(e) {
 
